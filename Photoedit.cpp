@@ -3,7 +3,7 @@
 // Author:  John Ayman Naim Aziz
 // Id:20210107
 // Date:    7 April 2022
-// Version: 2.0
+// Version: 3.0
 
 #include <iostream>
 #include <fstream>
@@ -15,13 +15,16 @@
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
+unsigned char new_image[SIZE][SIZE];
 
 void loadImage ();
 void saveImage ();
 void negativeimage ();
 void rotateimage ();
 void darkenligten ();
-void merge();
+void merge_image();
+void detect_image_edges();
+void flip();
 
 
 int main()
@@ -31,7 +34,7 @@ int main()
     int x=0;
 program:
   loadImage();
-cout<<"Please choose the filter you want to apply on the image: \n (1)-Invert colors \n (2)-Rotate image \n (3)-Merge \n (4)-Darken or lighten \n";
+cout<<"Please choose the filter you want to apply on the image: \n (1)-Invert colors \n (2)-Rotate image \n (3)-Merge \n (4)-Darken or lighten \n (5)-detect image edges \n (6)-Flip \n";
 cin>>filter;
 switch(filter){
 case 1:
@@ -41,10 +44,16 @@ case 2:
     rotateimage();
     break;
 case 3:
-     merge();
+     merge_image();
      break;
 case 4:
      darkenligten();
+     break;
+case 5:
+     detect_image_edges();
+     break;
+case 6:
+     flip();
      break;
 }
   saveImage();
@@ -118,21 +127,20 @@ void rotateimage(){//This function rotate the imagee by 90 degree clockwise dire
   }
 
 }
-void merge(){
-  unsigned char image2[SIZE][SIZE];
+void merge_image(){
   char image2FileName[100];
   //get the second image file name
    cout << "Enter the second image file name: ";
    cin >> image2FileName;
    strcat (image2FileName, ".bmp");
-   readGSBMP(image2FileName, image2);
+   readGSBMP(image2FileName, new_image);
    for(int i = 0; i<SIZE ; i++){
       for(int j = 0; j<SIZE ; j++){
         //get the avgerage of both images
-        image2[i][j] = image2[i][j]/2;
+        new_image[i][j] = new_image[i][j]/2;
          image[i][j] = image[i][j]/2;
          //merging the two images together
-        image[i][j]+=image2[i][j];
+        image[i][j]+=new_image[i][j];
       }
    }
 }
@@ -157,4 +165,39 @@ void darkenligten () {
             image[i][j]-=60;
       }
     }
+}
+void detect_image_edges() {
+  for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if(image[i][j] - image[i+1][j] <= 25 && image[i][j] - image[i][j+1] <= 25)
+                image[i][j] = 255 ;
+            else
+                image[i][j] = 0;
+        }
+    }
+}
+void flip() {
+    char f;
+    cout<<"Enter (v) to flip verically and (h) to flip horizontaly \n";
+enterf:
+    cin>>f;
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (f == 'h' || f=='H'){
+                new_image[i][j] = image[225 - i][j];}
+            else if (f == 'v' || f=='V'){
+                new_image[i][j] = image[i][255 - j];
+            }
+            else{
+                cout<<"Please enter (v) to flip verically and (h) to flip horizontaly \n";
+                goto enterf;
+            }
+        }
+    }
+      for (int k = 0; k < SIZE; k++) {
+        for (int d = 0; d < SIZE; d++) {
+            image[k][d]=new_image[k][d];
+        }
+    }
+
 }
