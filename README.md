@@ -1,5 +1,5 @@
-# Assignment-3
-program thar apply number of filters on a greyscale images
+#PHOTO EDIT
+program that apply number of filters on a greyscale images
 
 *the code is written in the filed called "photoedit.cpp"
 
